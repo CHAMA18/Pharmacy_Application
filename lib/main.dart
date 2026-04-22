@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'theme.dart';
 import 'nav.dart';
 
+/// Global theme mode notifier to allow changing theme from anywhere
+final ValueNotifier<ThemeMode> appThemeMode = ValueNotifier(ThemeMode.system);
+
 /// Main entry point for the application
 ///
 /// This sets up:
@@ -16,30 +19,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // As you extend the app, use MultiProvider to wrap the app
-    // and provide state to all widgets
-    // Example:
-    // return MultiProvider(
-    //   providers: [
-    //     ChangeNotifierProvider(create: (_) => ExampleProvider()),
-    //   ],
-    //   child: MaterialApp.router(
-    //     title: 'Dreamflow Starter',
-    //     debugShowCheckedModeBanner: false,
-    //     routerConfig: AppRouter.router,
-    //   ),
-    // );
-    return MaterialApp.router(
-      title: 'Dreamflow Starter',
-      debugShowCheckedModeBanner: false,
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: appThemeMode,
+      builder: (context, currentMode, _) {
+        return MaterialApp.router(
+          title: 'Dreamflow Starter',
+          debugShowCheckedModeBanner: false,
 
-      // Theme configuration
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+          // Theme configuration
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: currentMode,
 
-      // Router configuration
-      routerConfig: AppRouter.router,
+          // Router configuration
+          routerConfig: AppRouter.router,
+        );
+      },
     );
   }
 }

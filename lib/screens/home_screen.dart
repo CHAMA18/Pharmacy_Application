@@ -33,31 +33,31 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _buildHeader(context),
           const SizedBox(height: 24),
-          _buildSearchBar(),
+          _buildSearchBar(context),
           const SizedBox(height: 24),
-          _buildBanner(),
+          _buildBanner(context),
           const SizedBox(height: 28),
-          const Text(
+          Text(
             'Categories',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
-          _buildCategories(),
+          _buildCategories(context),
           const SizedBox(height: 28),
-          const Text(
+          Text(
             'Popular Products',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
-          _buildPopularProducts(),
+          _buildPopularProducts(context),
         ],
       ),
     );
@@ -65,10 +65,57 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Scaffold(
-      backgroundColor: Colors.white,
+      key: _scaffoldKey,
+      backgroundColor: theme.scaffoldBackgroundColor,
+      drawer: Drawer(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text('StackOne', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
+              accountEmail: Text('stackone@example.com', style: TextStyle(color: colorScheme.onPrimary)),
+              currentAccountPicture: const CircleAvatar(
+                backgroundImage: AssetImage('assets/images/face_null_1776849287776.jpg'),
+              ),
+              decoration: BoxDecoration(
+                color: colorScheme.primary,
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.person_outline, color: colorScheme.onSurface),
+              title: Text('Profile', style: TextStyle(color: colorScheme.onSurface)),
+              onTap: () {
+                Navigator.pop(context); // close drawer
+                setState(() {
+                  _currentIndex = 3;
+                });
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings_outlined, color: colorScheme.onSurface),
+              title: Text('Settings', style: TextStyle(color: colorScheme.onSurface)),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            Divider(color: colorScheme.outline.withValues(alpha: 0.2)),
+            ListTile(
+              leading: Icon(Icons.logout, color: colorScheme.error),
+              title: Text('Sign Out', style: TextStyle(color: colorScheme.error, fontWeight: FontWeight.w600)),
+              onTap: () {
+                context.go('/');
+              },
+            ),
+          ],
+        ),
+      ),
       body: SafeArea(
-        child: _buildBody(),
+        child: _buildBody(context),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -82,9 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.blue[600],
-        unselectedItemColor: Colors.black54,
+        backgroundColor: theme.scaffoldBackgroundColor,
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 12),
         unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
         items: const [
@@ -113,43 +160,49 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Row(
       children: [
-        const CircleAvatar(
-          radius: 24,
-          backgroundImage: AssetImage('assets/images/face_null_1776849287776.jpg'),
+        GestureDetector(
+          onTap: () => _scaffoldKey.currentState?.openDrawer(),
+          child: const CircleAvatar(
+            radius: 24,
+            backgroundImage: AssetImage('assets/images/face_null_1776849287776.jpg'),
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Hello StackOne,',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black54,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
-              SizedBox(height: 4),
+              const SizedBox(height: 4),
               Text(
                 'What Do You Want',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: colorScheme.onSurface,
                 ),
               ),
             ],
           ),
         ),
         Container(
-          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: colorScheme.surface,
             shape: BoxShape.circle,
+            border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
@@ -158,44 +211,68 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          child: const Icon(Icons.notifications_none, color: Colors.black87),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              customBorder: const CircleBorder(),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('No new notifications'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(Icons.notifications_none, color: colorScheme.onSurface),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return TextField(
+      style: TextStyle(color: colorScheme.onSurface),
       decoration: InputDecoration(
         hintText: 'Search Product',
-        hintStyle: const TextStyle(color: Colors.black54, fontSize: 14),
-        prefixIcon: const Icon(Icons.search, color: Colors.black54),
+        hintStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 14),
+        prefixIcon: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
         filled: true,
-        fillColor: const Color(0xFFF8F9FA),
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
         contentPadding: const EdgeInsets.symmetric(vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 1),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.2), width: 1),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFE0E0E0), width: 1),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.2), width: 1),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.blue[600]!, width: 1.5),
+          borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
         ),
       ),
     );
   }
 
-  Widget _buildBanner() {
+  Widget _buildBanner(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F6FB),
+        color: colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.blue[400]!, width: 6),
+        border: Border.all(color: colorScheme.primary, width: 6),
       ),
       child: Stack(
         children: [
@@ -206,12 +283,12 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       '#1 Medical Center',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                        color: colorScheme.onPrimaryContainer,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -219,7 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 24,
                       height: 4,
                       decoration: BoxDecoration(
-                        color: Colors.blue[800],
+                        color: colorScheme.primary,
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
@@ -236,21 +313,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 12),
                 RichText(
-                  text: const TextSpan(
+                  text: TextSpan(
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
                       height: 1.1,
                       letterSpacing: -0.5,
+                      color: colorScheme.onPrimaryContainer,
                     ),
-                    children: [
+                    children: const [
                       TextSpan(
                         text: 'WE CARE ABOUT\n',
-                        style: TextStyle(color: Color(0xFF1E3A8A)),
                       ),
                       TextSpan(
                         text: 'YOUR ',
-                        style: TextStyle(color: Color(0xFF1E3A8A)),
                       ),
                       TextSpan(
                         text: 'HEALTH',
@@ -260,39 +336,39 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'Lorem ipsum dolor sit amet, consectetur adipiscing elit,\nsed diam nonummy nibh euismod tincidunt.',
                   style: TextStyle(
                     fontSize: 10,
-                    color: Colors.black54,
+                    color: colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Book your appointment now:',
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+                    color: colorScheme.onPrimaryContainer,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3949AB),
+                    color: colorScheme.primary,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.phone, color: Colors.pinkAccent, size: 14),
-                      SizedBox(width: 6),
+                    children: [
+                      const Icon(Icons.phone, color: Colors.pinkAccent, size: 14),
+                      const SizedBox(width: 6),
                       Text(
                         '0123-456-789',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
@@ -309,13 +385,13 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 70,
                   backgroundColor: Colors.pink,
                   child: CircleAvatar(
                     radius: 66,
-                    backgroundColor: Color(0xFF1E3A8A),
-                    child: CircleAvatar(
+                    backgroundColor: colorScheme.primaryContainer,
+                    child: const CircleAvatar(
                       radius: 64,
                       backgroundImage: AssetImage('assets/images/face_null_1776849287776.jpg'),
                     ),
@@ -326,11 +402,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   left: 0,
                   child: Container(
                     padding: const EdgeInsets.all(6),
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF1E3A8A),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.add, color: Colors.white, size: 16),
+                    child: Icon(Icons.add, color: colorScheme.onPrimary, size: 16),
                   ),
                 ),
                 Positioned(
@@ -365,7 +441,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategories() {
+  Widget _buildCategories(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     final categories = [
       {'icon': Icons.medical_services_outlined, 'name': 'Medicine'},
       {'icon': Icons.monitor_weight_outlined, 'name': 'Supplements'},
@@ -397,10 +476,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.blue[50] : Colors.white,
+                color: isSelected ? colorScheme.primaryContainer : colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isSelected ? Colors.blue[400]! : const Color(0xFFE0E0E0), 
+                  color: isSelected ? colorScheme.primary : colorScheme.outline.withValues(alpha: 0.2), 
                   width: isSelected ? 1.5 : 1,
                 ),
                 boxShadow: [
@@ -415,7 +494,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Icon(
                     cat['icon'] as IconData, 
-                    color: isSelected ? Colors.blue[600] : Colors.black54, 
+                    color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant, 
                     size: 20
                   ),
                   const SizedBox(width: 8),
@@ -423,7 +502,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     cat['name'] as String,
                     style: TextStyle(
                       fontSize: 14,
-                      color: isSelected ? Colors.blue[700] : Colors.black87,
+                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
@@ -436,7 +515,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPopularProducts() {
+  Widget _buildPopularProducts(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     final allProducts = [
       {
         'category': 'Supplements',
@@ -480,12 +562,12 @@ class _HomeScreenState extends State<HomeScreen> {
         : allProducts.where((p) => p['category'] == _selectedCategory).toList();
 
     if (products.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 32.0),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32.0),
         child: Center(
           child: Text(
             'No products found.',
-            style: TextStyle(color: Colors.black54, fontSize: 16),
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16),
           ),
         ),
       );
@@ -505,9 +587,9 @@ class _HomeScreenState extends State<HomeScreen> {
         final product = products[index];
         return Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFFAFAFA),
+            color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFF0F0F0)),
+            border: Border.all(color: colorScheme.outline.withValues(alpha: 0.1)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -516,9 +598,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
                 child: Text(
                   product['category']!,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Colors.black54,
+                    color: colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -541,10 +623,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       product['name']!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -552,9 +634,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 4),
                     Text(
                       product['desc']!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Colors.black45,
+                        color: colorScheme.onSurfaceVariant,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -567,20 +649,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Price',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Colors.black54,
+                                color: colorScheme.onSurfaceVariant,
                               ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               product['price']!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFF00C853), // Green
+                                color: colorScheme.primary, 
                               ),
                             ),
                           ],
@@ -596,13 +678,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                           child: Container(
                             padding: const EdgeInsets.all(8),
-                            decoration: const BoxDecoration(
-                              color: Colors.black,
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.add,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                               size: 16,
                             ),
                           ),

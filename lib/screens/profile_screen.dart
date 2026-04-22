@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../main.dart'; // To access appThemeMode
 
 class ProfileScreen extends StatefulWidget {
   final VoidCallback? onBackPressed;
@@ -10,10 +12,13 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool _isDarkMode = false;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final dividerColor = colorScheme.outline.withValues(alpha: 0.2);
+
     return CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
@@ -25,14 +30,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new, size: 20),
                   onPressed: widget.onBackPressed,
-                  color: Colors.black87,
+                  color: colorScheme.onSurface,
                 ),
-                const Text(
+                Text(
                   'Profile',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(width: 48), // Spacer to balance the back button
@@ -49,68 +54,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 backgroundImage: AssetImage('assets/images/landscape_null_1776853579839.jpg'),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 '[Random Name]',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'developer@thestackone.com',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.black54,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 32),
-              const Divider(color: Color(0xFFE0E0E0), thickness: 1, height: 1),
+              Divider(color: dividerColor, thickness: 1, height: 1),
               _buildListTile(
                 icon: Icons.add,
                 title: 'Add Product',
                 onTap: () {},
+                colorScheme: colorScheme,
               ),
-              const Divider(color: Color(0xFFE0E0E0), thickness: 1, height: 1),
+              Divider(color: dividerColor, thickness: 1, height: 1),
               _buildListTile(
                 icon: Icons.person_outline,
                 title: 'Edit Profile',
                 onTap: () {},
+                colorScheme: colorScheme,
               ),
-              const Divider(color: Color(0xFFE0E0E0), thickness: 1, height: 1),
+              Divider(color: dividerColor, thickness: 1, height: 1),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
                 child: Row(
                   children: [
-                    const Icon(Icons.dark_mode_outlined, color: Colors.black, size: 24),
+                    Icon(Icons.dark_mode_outlined, color: colorScheme.onSurface, size: 24),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'Switch to Dark Mode',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.black54,
+                          color: colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
-                    Switch(
-                      value: _isDarkMode,
-                      onChanged: (value) {
-                        setState(() {
-                          _isDarkMode = value;
-                        });
+                    ValueListenableBuilder<ThemeMode>(
+                      valueListenable: appThemeMode,
+                      builder: (context, themeMode, _) {
+                        final isDark = themeMode == ThemeMode.dark ||
+                            (themeMode == ThemeMode.system &&
+                                MediaQuery.of(context).platformBrightness == Brightness.dark);
+                        return Switch(
+                          value: isDark,
+                          onChanged: (value) {
+                            appThemeMode.value = value ? ThemeMode.dark : ThemeMode.light;
+                          },
+                          activeColor: colorScheme.onPrimary,
+                          activeTrackColor: colorScheme.primary,
+                          inactiveThumbColor: colorScheme.onSurfaceVariant,
+                          inactiveTrackColor: colorScheme.surfaceContainerHighest,
+                        );
                       },
-                      activeColor: Colors.white,
-                      activeTrackColor: Colors.blue[600],
-                      inactiveThumbColor: Colors.white,
-                      inactiveTrackColor: Colors.grey[300],
                     ),
                   ],
                 ),
               ),
-              const Divider(color: Color(0xFFE0E0E0), thickness: 1, height: 1),
+              Divider(color: dividerColor, thickness: 1, height: 1),
             ],
           ),
         ),
@@ -124,18 +137,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      context.go('/');
+                    },
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Color(0xFFBDBDBD)),
+                      side: BorderSide(color: colorScheme.outline),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Logout',
                       style: TextStyle(
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -151,20 +166,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildListTile({required IconData icon, required String title, required VoidCallback onTap}) {
+  Widget _buildListTile({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    required ColorScheme colorScheme,
+  }) {
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
         child: Row(
           children: [
-            Icon(icon, color: Colors.black, size: 24),
+            Icon(icon, color: colorScheme.onSurface, size: 24),
             const SizedBox(width: 16),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
-                color: Colors.black54,
+                color: colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),
