@@ -26,39 +26,44 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     
     // Default home content
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(context),
-          const SizedBox(height: 24),
-          _buildSearchBar(context),
-          const SizedBox(height: 24),
-          _buildBanner(context),
-          const SizedBox(height: 28),
-          Text(
-            'Categories',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1000),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 24),
+              _buildSearchBar(context),
+              const SizedBox(height: 24),
+              _buildBanner(context),
+              const SizedBox(height: 28),
+              Text(
+                'Categories',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _buildCategories(context),
+              const SizedBox(height: 28),
+              Text(
+                'Popular Products',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _buildPopularProducts(context),
+            ],
           ),
-          const SizedBox(height: 16),
-          _buildCategories(context),
-          const SizedBox(height: 28),
-          Text(
-            'Popular Products',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: Theme.of(context).colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildPopularProducts(context),
-        ],
+        ),
       ),
     );
   }
@@ -115,9 +120,62 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: SafeArea(
-        child: _buildBody(context),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth > 800) {
+              // Desktop layout with Navigation Rail
+              return Row(
+                children: [
+                  NavigationRail(
+                    selectedIndex: _currentIndex,
+                    onDestinationSelected: (index) {
+                      if (index == 1) {
+                        context.push('/cart');
+                      } else {
+                        setState(() {
+                          _currentIndex = index;
+                        });
+                      }
+                    },
+                    labelType: NavigationRailLabelType.all,
+                    backgroundColor: theme.scaffoldBackgroundColor,
+                    selectedIconTheme: IconThemeData(color: colorScheme.primary),
+                    selectedLabelTextStyle: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 12),
+                    unselectedLabelTextStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500, fontSize: 12),
+                    destinations: const [
+                      NavigationRailDestination(
+                        icon: Icon(Icons.home_outlined),
+                        selectedIcon: Icon(Icons.home),
+                        label: Text('Home'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.shopping_cart_outlined),
+                        selectedIcon: Icon(Icons.shopping_cart),
+                        label: Text('Orders'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.medication_outlined),
+                        selectedIcon: Icon(Icons.medication),
+                        label: Text('Medications'),
+                      ),
+                      NavigationRailDestination(
+                        icon: Icon(Icons.person_outline),
+                        selectedIcon: Icon(Icons.person),
+                        label: Text('Profile'),
+                      ),
+                    ],
+                  ),
+                  const VerticalDivider(thickness: 1, width: 1),
+                  Expanded(child: _buildBody(context)),
+                ],
+              );
+            }
+            // Mobile layout
+            return _buildBody(context);
+          },
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: MediaQuery.of(context).size.width > 800 ? null : BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           if (index == 1) {
@@ -576,8 +634,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 250,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         childAspectRatio: 0.65,

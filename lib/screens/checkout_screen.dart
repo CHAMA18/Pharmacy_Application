@@ -32,60 +32,65 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Shipping Address',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Shipping Address',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildAddressCard(),
+                      const SizedBox(height: 28),
+                      const Text(
+                        'Payment Method',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      _buildPaymentOption(
+                        index: 0,
+                        title: 'Credit Card',
+                        subtitle: '**** **** **** 4242',
+                        icon: Icons.credit_card,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildPaymentOption(
+                        index: 1,
+                        title: 'PayPal',
+                        subtitle: 'johndoe@example.com',
+                        icon: Icons.account_balance_wallet,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildPaymentOption(
+                        index: 2,
+                        title: 'Cash on Delivery',
+                        subtitle: 'Pay when you receive',
+                        icon: Icons.money,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 16),
-                  _buildAddressCard(),
-                  const SizedBox(height: 28),
-                  const Text(
-                    'Payment Method',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildPaymentOption(
-                    index: 0,
-                    title: 'Credit Card',
-                    subtitle: '**** **** **** 4242',
-                    icon: Icons.credit_card,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPaymentOption(
-                    index: 1,
-                    title: 'PayPal',
-                    subtitle: 'johndoe@example.com',
-                    icon: Icons.account_balance_wallet,
-                  ),
-                  const SizedBox(height: 12),
-                  _buildPaymentOption(
-                    index: 2,
-                    title: 'Cash on Delivery',
-                    subtitle: 'Pay when you receive',
-                    icon: Icons.money,
-                  ),
-                ],
+                ),
               ),
-            ),
+              _buildFooter(context),
+            ],
           ),
-          _buildFooter(context),
-        ],
+        ),
       ),
     );
   }

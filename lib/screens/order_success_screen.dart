@@ -10,9 +10,11 @@ class OrderSuccessScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(32.0),
-            child: Column(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(

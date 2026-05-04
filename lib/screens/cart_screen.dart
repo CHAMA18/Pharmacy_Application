@@ -103,21 +103,26 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: _cartItems.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 16),
-              itemBuilder: (context, index) {
-                final item = _cartItems[index];
-                return _buildCartItem(item, index);
-              },
-            ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: _cartItems.length,
+                  separatorBuilder: (context, index) => const SizedBox(height: 16),
+                  itemBuilder: (context, index) {
+                    final item = _cartItems[index];
+                    return _buildCartItem(item, index);
+                  },
+                ),
+              ),
+              _buildFooter(),
+            ],
           ),
-          _buildFooter(),
-        ],
+        ),
       ),
     );
   }
