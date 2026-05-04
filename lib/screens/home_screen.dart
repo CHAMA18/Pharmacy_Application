@@ -26,44 +26,39 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     
     // Default home content
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1000),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              const SizedBox(height: 24),
-              _buildSearchBar(context),
-              const SizedBox(height: 24),
-              _buildBanner(context),
-              const SizedBox(height: 28),
-              Text(
-                'Categories',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildCategories(context),
-              const SizedBox(height: 28),
-              Text(
-                'Popular Products',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildPopularProducts(context),
-            ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context),
+          const SizedBox(height: 24),
+          _buildSearchBar(context),
+          const SizedBox(height: 24),
+          _buildBanner(context),
+          const SizedBox(height: 28),
+          Text(
+            'Categories',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-        ),
+          const SizedBox(height: 16),
+          _buildCategories(context),
+          const SizedBox(height: 28),
+          Text(
+            'Popular Products',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _buildPopularProducts(context),
+        ],
       ),
     );
   }
