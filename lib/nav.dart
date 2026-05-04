@@ -5,6 +5,7 @@ import 'package:pharmay_application/screens/home_screen.dart';
 import 'package:pharmay_application/screens/cart_screen.dart';
 import 'package:pharmay_application/screens/checkout_screen.dart';
 import 'package:pharmay_application/screens/order_success_screen.dart';
+import 'package:pharmay_application/screens/admin_panel_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -67,6 +68,13 @@ class AppRouter {
           child: OrderSuccessScreen(),
         ),
       ),
+      GoRoute(
+        path: AppRoutes.admin,
+        name: 'admin',
+        pageBuilder: (context, state) => const NoTransitionPage(
+          child: AdminPanelScreen(),
+        ),
+      ),
     ],
   );
 }
@@ -80,4 +88,5 @@ class AppRoutes {
   static const String cart = '/cart';
   static const String checkout = '/checkout';
   static const String orderSuccess = '/order_success';
+  static const String admin = '/admin';
 }

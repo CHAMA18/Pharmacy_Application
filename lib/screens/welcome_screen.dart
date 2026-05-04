@@ -79,7 +79,7 @@ class WelcomeScreen extends StatelessWidget {
   List<Widget> _buildContent(BuildContext context) {
     return [
       const Text(
-        'Welcome To StackOne\nPharmacy',
+        'Welcome To Meditracker',
         style: TextStyle(
           fontSize: 34,
           fontWeight: FontWeight.w300,

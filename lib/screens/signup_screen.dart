@@ -37,7 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
             children: [
               const SizedBox(height: 48),
               // Logo
-              const _StackOneLogo(),
+              const _MeditrackerLogo(),
               const SizedBox(height: 64),
               // Title
               const Text(
@@ -188,6 +188,8 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
       ),
+    ),
+    ),
     );
   }
 }
@@ -232,8 +234,8 @@ class _CustomTextField extends StatelessWidget {
   }
 }
 
-class _StackOneLogo extends StatelessWidget {
-  const _StackOneLogo();
+class _MeditrackerLogo extends StatelessWidget {
+  const _MeditrackerLogo();
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +252,7 @@ class _StackOneLogo extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         const Text(
-          'StackOne',
+          'Meditracker',
           style: TextStyle(
             fontSize: 40,
             fontWeight: FontWeight.w800,

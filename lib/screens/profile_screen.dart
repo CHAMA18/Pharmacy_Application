@@ -19,7 +19,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final colorScheme = theme.colorScheme;
     final dividerColor = colorScheme.outline.withValues(alpha: 0.2);
 
-    return CustomScrollView(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: CustomScrollView(
       slivers: [
         SliverToBoxAdapter(
           child: Padding(
@@ -163,6 +166,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    ),
+    ),
     );
   }
 

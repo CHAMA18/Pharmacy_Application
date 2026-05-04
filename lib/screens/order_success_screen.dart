@@ -78,6 +78,7 @@ class OrderSuccessScreen extends StatelessWidget {
           ),
         ),
       ),
+      ),
     );
   }
 }

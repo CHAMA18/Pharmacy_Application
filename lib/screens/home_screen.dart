@@ -82,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text('StackOne', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
+              accountName: Text('Meditracker User', style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onPrimary)),
               accountEmail: Text('stackone@example.com', style: TextStyle(color: colorScheme.onPrimary)),
               currentAccountPicture: const CircleAvatar(
                 backgroundImage: AssetImage('assets/images/face_null_1776849287776.jpg'),
@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // Desktop layout with Navigation Rail
               return Row(
                 children: [
-                  NavigationRail(
+                  _ModernSidebar(
                     selectedIndex: _currentIndex,
                     onDestinationSelected: (index) {
                       if (index == 1) {
@@ -137,35 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         });
                       }
                     },
-                    labelType: NavigationRailLabelType.all,
-                    backgroundColor: theme.scaffoldBackgroundColor,
-                    selectedIconTheme: IconThemeData(color: colorScheme.primary),
-                    selectedLabelTextStyle: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w600, fontSize: 12),
-                    unselectedLabelTextStyle: TextStyle(color: colorScheme.onSurfaceVariant, fontWeight: FontWeight.w500, fontSize: 12),
-                    destinations: const [
-                      NavigationRailDestination(
-                        icon: Icon(Icons.home_outlined),
-                        selectedIcon: Icon(Icons.home),
-                        label: Text('Home'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.shopping_cart_outlined),
-                        selectedIcon: Icon(Icons.shopping_cart),
-                        label: Text('Orders'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.medication_outlined),
-                        selectedIcon: Icon(Icons.medication),
-                        label: Text('Medications'),
-                      ),
-                      NavigationRailDestination(
-                        icon: Icon(Icons.person_outline),
-                        selectedIcon: Icon(Icons.person),
-                        label: Text('Profile'),
-                      ),
-                    ],
                   ),
-                  const VerticalDivider(thickness: 1, width: 1),
                   Expanded(child: _buildBody(context)),
                 ],
               );
@@ -237,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hello StackOne,',
+                'Hello User,',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -757,6 +729,202 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+    );
+  }
+}
+
+class _ModernSidebar extends StatelessWidget {
+  final int selectedIndex;
+  final ValueChanged<int> onDestinationSelected;
+
+  const _ModernSidebar({
+    Key? key,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return Container(
+      width: 100,
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        border: Border(
+          right: BorderSide(
+            color: colorScheme.outline.withValues(alpha: 0.1),
+            width: 1,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 32),
+          // App Logo
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: colorScheme.primary.withValues(alpha: 0.2),
+                width: 2,
+              ),
+            ),
+            child: Icon(
+              Icons.health_and_safety_rounded,
+              color: colorScheme.primary,
+              size: 32,
+            ),
+          ),
+          const SizedBox(height: 40),
+          Expanded(
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                _SidebarItem(
+                  icon: Icons.home_rounded,
+                  label: 'Home',
+                  isSelected: selectedIndex == 0,
+                  onTap: () => onDestinationSelected(0),
+                ),
+                _SidebarItem(
+                  icon: Icons.shopping_cart_rounded,
+                  label: 'Orders',
+                  isSelected: selectedIndex == 1,
+                  onTap: () => onDestinationSelected(1),
+                ),
+                _SidebarItem(
+                  icon: Icons.medication_rounded,
+                  label: 'Medications',
+                  isSelected: selectedIndex == 2,
+                  onTap: () => onDestinationSelected(2),
+                ),
+                _SidebarItem(
+                  icon: Icons.person_rounded,
+                  label: 'Profile',
+                  isSelected: selectedIndex == 3,
+                  onTap: () => onDestinationSelected(3),
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 16),
+                _SidebarItem(
+                  icon: Icons.admin_panel_settings_rounded,
+                  label: 'Admin',
+                  isSelected: false,
+                  onTap: () => context.push('/admin'),
+                ),
+              ],
+            ),
+          ),
+          // Bottom section
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: _SidebarItem(
+              icon: Icons.logout_rounded,
+              label: 'Logout',
+              isSelected: false,
+              onTap: () => context.go('/'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SidebarItem extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _SidebarItem({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<_SidebarItem> createState() => _SidebarItemState();
+}
+
+class _SidebarItemState extends State<_SidebarItem> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    final Color iconColor = widget.isSelected 
+        ? colorScheme.onPrimary 
+        : (_isHovered ? colorScheme.primary : colorScheme.onSurfaceVariant);
+        
+    final Color bgColor = widget.isSelected 
+        ? colorScheme.primary 
+        : (_isHovered ? colorScheme.primaryContainer.withValues(alpha: 0.5) : Colors.transparent);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          margin: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: widget.isSelected
+                      ? [
+                          BoxShadow(
+                            color: colorScheme.primary.withValues(alpha: 0.3),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          )
+                        ]
+                      : [],
+                ),
+                child: AnimatedScale(
+                  scale: widget.isSelected || _isHovered ? 1.1 : 1.0,
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutCubic,
+                  child: Icon(
+                    widget.icon,
+                    color: iconColor,
+                    size: 26,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: widget.isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: widget.isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                ),
+                child: Text(widget.label),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
